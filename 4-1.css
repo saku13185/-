@@ -1,0 +1,20 @@
+a.btn_01 {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    width: 160px;
+    margin: auto;
+    padding: 1rem 4rem;
+    font-weight: bold;
+    border: 2px solid #27acd9;
+    color: #27acd9;
+    transition: 0.5s;
+    writing-mode: horizontal-tb;
+    text-orientation: upright;
+    white-space: nowrap;
+}
+
+a.btn_01:hover {
+    color: #fff;
+    background: #27acd9;
+}

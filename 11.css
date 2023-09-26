@@ -1,0 +1,52 @@
+a.btn_01 {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    width: 160px;
+    margin: auto;
+    padding: 1rem 4rem;
+    font-weight: bold;
+    border: 2px solid #27acd9;
+    color: #27acd9;
+    transition: 0.5s;
+    writing-mode: horizontal-tb;
+    text-orientation: upright;
+    white-space: nowrap;
+}
+
+a.btn_01:hover {
+    color: #fff;
+    background: #27acd9;
+}
+
+.container {
+    font-family: 'Noto Sans JP', sans-serif;
+    margin-top: 80px;
+}
+
+a {
+    text-decoration: none;
+}
+
+th {
+    height: 30px;
+    text-align: center;
+}
+
+td {
+    height: 100px;
+}
+
+.today {
+    background: orange !important;
+}
+
+th:nth-of-type(1),
+td:nth-of-type(1) {
+    color: red;
+}
+
+th:nth-of-type(7),
+td:nth-of-type(7) {
+    color: blue;
+}
