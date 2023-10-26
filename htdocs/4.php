@@ -4,78 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="4.css">
-    <title>アルバイト情報　登録・消去</title>
+    <title>Part-Time Employee Information Registration and Deletion</title>
 
 </head>
 
 <body>
     <div style="text-align: center;">
-        <h1>アルバイト情報 登録・消去</h1>
-<form action="4-1.php" method="post">
-    <label for="name" style="font-size: 30px;">名前:</label>
-    <input name="name" id="name" style="font-size: 30px;">
-    <br>
-    
-    <label for="phone" style="font-size: 30px;">電話番号:</label>
-    <input type="tel" name="phone" id="phone" required style="font-size: 30px;">
-    <br>
+        <h1>Part-Time Employee Information Registration and Deletion</h1>
+        <form action="4-1.php" method="post">
+            <label for="name" style="font-size: 30px;">Name:</label>
+            <input name="name" id="name" style="font-size: 30px;">
+            <br>
 
-    <label for="hourly-rate" style="font-size: 30px;">時給:</label>
-    <input type="number" name="hourly-rate" id="hourly-rate" required style="font-size: 30px;">
-    <br>
+            <label for="phone" style="font-size: 30px;">Phone Number:</label>
+            <input type="tel" name="phone" id="phone" required style="font-size: 30px;">
+            <br>
 
-    <input type="submit" name="register" value="登録" class="btn_01">
-    <input type="submit" name="delete" value="消去" class="btn_02">
-</form>
+            <label for="hourly-rate" style="font-size: 30px;">Hourly Rate:</label>
+            <input type="number" name="hourly-rate" id="hourly-rate" required style="font-size: 30px;">
+            <br>
+
+            <input type="submit" name="register" value="Register" class="btn_01">
+            <input type="submit" name="delete" value="Delete" class="btn_02">
+        </form>
     </div>
 </body>
 
 </html>
+
 <?php
 
-// データベース接続設定
-require_once ("db.php");
+// Database connection settings
+require_once("db.php");
 
-
-// 登録ボタンが押された場合の処理
+// Processing when the registration button is pressed
 if (isset($_POST['register'])) {
     $name = $_POST['name'];
     $phone = $_POST['phone'];
     $hourlyRate = $_POST['hourly-rate'];
 
-    // プリペアドステートメントの準備
-    $stmt = $db->prepare("INSERT INTO arubaito_table (バイトID, 名前, 電話番号, 時給) VALUES (null, ?, ?, ?)");
+    // Prepare the prepared statement
+    $stmt = $db->prepare("INSERT INTO part_time_employee_table (EmployeeID, Name, Phone, HourlyRate) VALUES (null, ?, ?, ?)");
     $stmt->bindParam(1, $name);
     $stmt->bindParam(2, $phone);
     $stmt->bindParam(3, $hourlyRate);
 
-    // プリペアドステートメントの実行
+    // Execute the prepared statement
     if ($stmt->execute()) {
-        echo "アルバイト情報が登録されました。";
+        echo "Part-time employee information has been registered.";
     } else {
-        echo "アルバイト情報の登録に失敗しました。";
+        echo "Failed to register part-time employee information.";
     }
 }
 
-// 消去ボタンが押された場合の処理
+// Processing when the delete button is pressed
 if (isset($_POST['delete'])) {
     $name = $_POST['name'];
     $phone = $_POST['phone'];
 
-    // プリペアドステートメントの準備
-    $stmt = $db->prepare("DELETE FROM arubaito_table WHERE 名前=? AND 電話番号=?");
+    // Prepare the prepared statement
+    $stmt = $db->prepare("DELETE FROM part_time_employee_table WHERE Name=? AND Phone=?");
     $stmt->bindParam(1, $name);
     $stmt->bindParam(2, $phone);
 
-    // プリペアドステートメントの実行
+    // Execute the prepared statement
     if ($stmt->execute()) {
-        echo "アルバイト情報が削除されました。";
+        echo "Part-time employee information has been deleted.";
     } else {
-        echo "アルバイト情報の削除に失敗しました。";
+        echo "Failed to delete part-time employee information.";
     }
 }
 
-// データベース接続を閉じる
+// Close the database connection
 $db = null;
 ?>
-

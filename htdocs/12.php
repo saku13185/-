@@ -5,49 +5,49 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="1.css">
     <style>
-        /* ヘッダーのスタイル */
+        /* Header Style */
         .fixed-header {
-            position: sticky;  /* 固定位置 */
-            top: 0;  /* ヘッダーをページ上端に固定 */
+            position: sticky;
+            top: 0;
             background-color: white;
-            z-index: 1;  /* 他の要素より手前に表示 */
+            z-index: 1;
         }
 
-        /* テーブルのスタイル */
+        /* Table Style */
         .shift-table {
-            overflow: auto;  /* スクロール可能にする */
-            height: 400px;  /* 表示する高さを指定 */
+            overflow: auto;
+            height: 400px;
         }
 
-        /* IDと名前のスタイル */
+        /* ID and Name Style */
         .fixed-column {
-            position: sticky;  /* 固定位置 */
-            left: 0;  /* IDと名前をページ左端に固定 */
+            position: sticky;
+            left: 0;
             background-color: white;
-            z-index: 1;  /* 他の要素より手前に表示 */
+            z-index: 1;
         }
     </style>
-    <title>シフト作成者シフト確認</title>
+    <title>Shift Creator Shift Confirmation</title>
 </head>
 
 <body>
-    <h1>シフト作成者シフト確認</h1>
+    <h1>Shift Creator Shift Confirmation</h1>
 
     <form method="GET" action="12.php">
-        <label for="date">日付選択：</label>
+        <label for="date">Date Selection:</label>
         <input type="month" name="date" id="date" value="<?php echo isset($_GET['date']) ? $_GET['date'] : ''; ?>">
-        <input type="submit" value="表示">
+        <input type="submit" value="Display">
     </form>
 
     <?php
-    // データベース接続設定
+    // Database connection settings
     require_once("db.php");
 
-    // バイトID、名前、電話番号、時給のデータをデータベースから取得
+    // Retrieve data for staff ID, name, phone number, and hourly wage from the database
     $stmt = $db->query("SELECT * FROM arubaito_table");
     $staff_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // シフト表の開始日と終了日を設定します
+    // Set the start and end dates for the shift table
     $start_date = null;
 
     if (isset($_GET['date'])) {
@@ -63,26 +63,26 @@
     $end_date = clone $start_date;
     $end_date->modify('last day of this month');
 
-    // 曜日の配列
-    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    // Array of weekdays
+    $weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    // シフト表のヘッダーを作成します
+    // Create the header of the shift table
     echo "<div class='shift-table'>";
     echo "<table>";
     echo "<thead class='fixed-header'>";
-    echo "<tr><th class='fixed-column'>ID</th><th class='fixed-column'>名前</th>";
+    echo "<tr><th class='fixed-column'>ID</th><th class='fixed-column'>Name</th>";
 
     $current_date = clone $start_date;
 
-    // 指定された日付から月の初めから月末までの日付を表示します
+    // Display dates from the specified date to the end of the month
     while ($current_date <= $end_date) {
         $date = $current_date->format('Y-m-d');
         $weekday = $weekdays[$current_date->format('w')];
         $cell_style = '';
 
-        if ($weekday === '土') {
+        if ($weekday === 'Sat') {
             $cell_style = 'background-color: blue; color: white;';
-        } elseif ($weekday === '日') {
+        } elseif ($weekday === 'Sun') {
             $cell_style = 'background-color: red; color: white;';
         }
 
@@ -90,14 +90,14 @@
         $current_date->add(new DateInterval('P1D'));
     }
 
-    echo "<th style='border: 1px solid black;'>労働時間</th>";
-    echo "<th style='border: 1px solid black;'>休憩時間</th>";
-    echo "<th style='border: 1px solid black; background-color: orange;'>給料</th>";
+    echo "<th style='border: 1px solid black;'>Work Hours</th>";
+    echo "<th style='border: 1px solid black;'>Break Time</th>";
+    echo "<th style='border: 1px solid black; background-color: orange;'>Salary</th>";
     echo "</tr>";
     echo "</thead>";
     echo "<tbody>";
 
-    // スタッフごとにループしてシフト情報を表示します
+    // Loop through staff members and display shift information
     foreach ($staff_data as $staff) {
         $id = $staff['バイトID'];
         $name = $staff['名前'];
@@ -108,16 +108,16 @@
 
         $current_date = clone $start_date;
 
-        // 指定された日付から月の初めから月末までのシフト情報を表示します
+        // Calculate and display shift information from the specified date to the end of the month
         while ($current_date <= $end_date) {
             $date = $current_date->format('Y-m-d');
 
-            // シフト情報をデータベースから取得します
+            // Retrieve shift information from the database
             $stmt = $db->prepare("SELECT TIME_FORMAT(開始, '%H:%i') AS 開始, TIME_FORMAT(終了, '%H:%i') AS 終了 FROM revised_sihuto_table WHERE バイトID = ? AND 日付 = ?");
             $stmt->execute([$id, $date]);
             $shift_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // 開始時間と終了時間を取得します
+            // Get start and end times
             $start_time = isset($shift_data['開始']) ? $shift_data['開始'] : '';
             $end_time = isset($shift_data['終了']) ? $shift_data['終了'] : '';
 
@@ -126,23 +126,23 @@
             $current_date->add(new DateInterval('P1D'));
         }
 
-        // 労働時間と休憩時間と給料を計算します
+        // Calculate total work hours, break time, and salary
         $total_work_hours = 0;
         $total_break_hours = 0;
         $total_pay = 0;
 
         $current_date = clone $start_date;
 
-        // 指定された日付から月の初めから月末までのシフト情報を計算します
+        // Calculate shift information from the specified date to the end of the month
         while ($current_date <= $end_date) {
             $date = $current_date->format('Y-m-d');
 
-            // シフト情報をデータベースから取得します
+            // Retrieve shift information from the database
             $stmt = $db->prepare("SELECT TIME_FORMAT(開始, '%H:%i') AS 開始, TIME_FORMAT(終了, '%H:%i') AS 終了 FROM revised_sihuto_table WHERE バイトID = ? AND 日付 = ?");
             $stmt->execute([$id, $date]);
             $shift_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // 開始時間と終了時間を取得します
+            // Get start and end times
             $start_time = isset($shift_data['開始']) ? $shift_data['開始'] : '';
             $end_time = isset($shift_data['終了']) ? $shift_data['終了'] : '';
 
@@ -151,11 +151,11 @@
                 $end_datetime = new DateTime($date . ' ' . $end_time);
                 $interval = $start_datetime->diff($end_datetime);
 
-                // 労働時間を計算します
+                // Calculate work hours
                 $work_hours = $interval->format('%H:%I');
                 $total_work_hours += strtotime($work_hours) - strtotime('00:00');
 
-                // 休憩時間を計算します
+                // Calculate break time
                 if ($interval->h >= 8) {
                     $break_hours = '01:00';
                 } elseif ($interval->h >= 6) {
@@ -169,7 +169,7 @@
             $current_date->add(new DateInterval('P1D'));
         }
 
-        // 給料を計算します
+        // Calculate salary
         $hourly_wage = $staff['時給'];
         $total_pay = floor(($total_work_hours - $total_break_hours) / 3600 * $hourly_wage);
 
@@ -195,7 +195,7 @@
 
     <br>
     <a href="1.php" class="btn_01">
-        <span class="vertical-text">戻る</span>
+        <span class="vertical-text">Back</span>
     </a>
 
 </body>

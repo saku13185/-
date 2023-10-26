@@ -3,72 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <link rel='stylesheet' href='4-1.css' />
-    <title>アルバイトデータ表示</title>
+    <title>Part-Time Employee Data Display</title>
   </head>
   <body>
     <table border="1">
       <tr>
-        <th>名前</th>
-        <th>時給</th>
+        <th>Name</th>
+        <th>Hourly Rate</th>
       </tr>
 
       <?php
-      // データベース接続設定
+      // Database connection settings
       require_once ("db.php");
 
-      // 登録ボタンが押された場合の処理
+      // Processing when the registration button is pressed
       if (isset($_POST['register'])) {
           $name = $_POST['name'];
           $phone = $_POST['phone'];
           $hourlyRate = $_POST['hourly-rate'];
 
-          // プリペアドステートメントの準備
-          $sql="INSERT INTO arubaito_table (バイトID, 名前, 電話番号, 時給) VALUES (NULL, ?, ?, ?)";
+          // Prepare the prepared statement
+          $sql="INSERT INTO part_time_employee_table (EmployeeID, Name, Phone, HourlyRate) VALUES (NULL, ?, ?, ?)";
           $stmt = $db->prepare($sql) ;
 
-         // プリペアドステートメントの実行
+         // Execute the prepared statement
          if ($stmt->execute([$name, $phone, $hourlyRate])) {
-          // データの登録が成功した場合、リダイレクトする
+          // If data registration is successful, redirect
           header("Location: ".$_SERVER['PHP_SELF']);
           exit();
       } else {
-          echo "アルバイト情報の登録に失敗しました。";
+          echo "Failed to register part-time employee information.";
       }
   }
 
-      // 消去ボタンが押された場合の処理
+      // Processing when the delete button is pressed
       if (isset($_POST['delete'])) {
           $name = $_POST['name'];
           $phone = $_POST['phone'];
 
-          // プリペアドステートメントの準備
-          $stmt = $db->prepare("DELETE FROM arubaito_table WHERE 名前=? AND 電話番号=?");
+          // Prepare the prepared statement
+          $stmt = $db->prepare("DELETE FROM part_time_employee_table WHERE Name=? AND Phone=?");
           $stmt->bindParam(1, $name);
           $stmt->bindParam(2, $phone);
 
-         // プリペアドステートメントの実行
+         // Execute the prepared statement
          if ($stmt->execute([$name, $phone])) {
-          // データの削除が成功した場合、リダイレクトする
+          // If data deletion is successful, redirect
           header("Location: ".$_SERVER['PHP_SELF']);
           exit();
       } else {
-          echo "アルバイト情報の削除に失敗しました。";
+          echo "Failed to delete part-time employee information.";
       }
   }
 
-      // アルバイト情報の取得
-      $sql = 'SELECT * FROM arubaito_table';
+      // Get part-time employee information
+      $sql = 'SELECT * FROM part_time_employee_table';
       $stmt = $db->prepare($sql);
       $stmt->execute();
       $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
       foreach ($result as $row) {
-        $name = htmlspecialchars($row['名前'], ENT_QUOTES, 'UTF-8');
-        $hourlyRate = htmlspecialchars($row['時給'], ENT_QUOTES, 'UTF-8');
+        $name = htmlspecialchars($row['Name'], ENT_QUOTES, 'UTF-8');
+        $hourlyRate = htmlspecialchars($row['HourlyRate'], ENT_QUOTES, 'UTF-8');
         echo "<tr><td>{$name}</td><td>{$hourlyRate}</td></tr>";
       }
 
-      // データベース接続を閉じる
+      // Close the database connection
       $db = null;
       ?>
 
@@ -76,7 +76,7 @@
 
     <br>
     <a href="1.php" class="btn_01">
-      <span class="vertical-text">戻る</span>
+      <span class="vertical-text">Back</span>
     </a>
 
   </body>
